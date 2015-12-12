@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+	<title>Bandwagn</title>
+	<meta charset=utf-8 />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+	<script>
+		var echonest_apikey = "YVK7EBOA6AZHLURKI";
+		var spotify_apikey = "";
+		var locale = "Medford, MA";
+		var artists = {};
+		var myLat = 0;
+		var myLng = 0;
+
+		$(document).ready(function(){
+			// loading message
+			var locale = getClientLocation();
+
+			$( "#advance" ).click(function() {
+  				$.get("bandwagn.herokuapp.com/getRandomLocation", function(data) {
+  					// data in format {"lat": xxx, "lng": xxx}
+  					geocodeClientLocation(data.lat, data.lng);
+  				});
+			});
+		});
+
+		function getClientLocation() {
+			if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+				navigator.geolocation.getCurrentPosition(function(position) {
+					myLat = position.coords.latitude;
+					myLng = position.coords.longitude;
+					//storeClientLocation(myLat, myLng);	
+					geocodeClientLocation(myLat, myLng);
+				});
+			}
+			else {
+				alert("Geolocation is not supported by your web browser. What a shame!");
+			}
+		}
+
+		function geocodeClientLocation(lat, lng) {
+			var clientLocale = new google.maps.LatLng(lat, lng);
+			var geocoder = new google.maps.Geocoder();
+    		geocoder.geocode({'location': clientLocale}, function(results, status) {
+    			if (status === google.maps.GeocoderStatus.OK) {
+    				if (results[1]) { // geocoded successfully and got an address
+    					locale = formatClientCity(results[0]); // get city, state format
+    					storeClientCity(locale);
+    					fetchSongsByLocation(lat, lng);
+    				} else {
+    					alert("Your latitude and longitude could not be reverse geocoded");
+    				}
+    			} else {
+    				alert("Geocoder failed due to: " + status);
+    			}
+    		});
+		}
+ 		
+ 		function storeClientCity(city) {
+ 			var currentLocation = [city];
+ 			var storedLocations = new Array();
+
+			if (localStorage) {
+  			// LocalStorage is supported!
+	  			if ("Bandwagn" in localStorage) {
+	  				storedLocations = JSON.parse(localStorage.getItem("Bandwagn"));
+	    			storedLocations.push(currentLocation);
+	    			localStorage.setItem("Bandwagn", JSON.stringify(storedLocations)); 
+				} else {
+	    			localStorage.setItem("Bandwagn", JSON.stringify(currentLocation));
+				}
+			} else {
+  			// No support. Use a fallback such as browser cookies or store on the server.
+			}
+ 		}
+
+ 		function storeClientLocation(lat, lng) {
+ 			var currentLocation = [{lat, lng}];
+ 			var storedLocations = new Array();
+
+			if (localStorage) {
+  			// LocalStorage is supported!
+	  			if ("Bandwagn" in localStorage) {
+	  				storedLocations = JSON.parse(localStorage.getItem("Bandwagn"));
+	    			storedLocations.push(currentLocation);
+	    			localStorage.setItem("Bandwagn", JSON.stringify(storedLocations)); 
+				} else {
+	    			localStorage.setItem("Bandwagn", JSON.stringify(currentLocation));
+				}
+			} else {
+  			// No support. Use a fallback such as browser cookies or store on the server.
+			}
+ 		}
+ 		
+ 		// U.S.-centric; could go back and jquerify later
+		function formatClientCity(result) {
+			var cityState = "";
+			//look for locality tag and administrative_area_level_1
+			var city = "";
+			var state = "";
+			for (var i=0, len=result.address_components.length; i<len; i++) {
+				var ac = result.address_components[i];
+				if(ac.types.indexOf("locality") >= 0) city = ac.long_name;
+				if(ac.types.indexOf("administrative_area_level_1") >= 0) state = ac.long_name;
+			}
+			//only report if we got Good Stuff
+			if(city != '' && state != '') {
+				cityState += city + ", " + state;
+				return cityState;
+			}
+		}
+
+		/*// currently only generates playlist for one artist, though it shows all of them.
+		function fetchArtistsByLocation(locale) {
+			var url = "http://developer.echonest.com/api/v4/artist/search";
+
+			$.getJSON(url, 
+				{ 
+	            'api_key': echonest_apikey,
+	            'artist_location': locale, 
+	            'results' : 5, 
+	            'sort': 'hotttnesss-desc'
+        		}, 
+        		function(data) {
+        			if (data.response.status.code == 0) {
+		                artists = data.response.artists;
+		                //$("#results").append("<h2>Artists from near " + locale + "</h2>");
+		                if (artists.length > 0) {
+		                    for (var i = 0; i < artists.length; i++) {
+		                        var artist = artists[i];
+		                        //var li = $("<li>");
+		                        //li.text(artist.name);
+		                        //$("#results").append(li);
+		                    }
+		                    console.log(artists[0].name);
+		                    generatePlaylist(artists[0]);
+		                } else {
+		                        alert("No results");
+		                }
+		            } else {
+		                alert("Trouble getting artists: " + data.response.status.message);
+		            }
+        		})
+        .error( 
+            function(data) {
+                alert("Location not recognized. Location must be a city, region, or country.");
+            }
+        );
+		}*/
+
+		// 
+		function fetchSongsByLocation(lat, lng) {
+			var min_lat = Math.round(lat);
+			var max_lat = min_lat + 1;
+			var max_lng = Math.round(lng);
+			var min_lng = max_lng - 1;
+
+			var url = "http://developer.echonest.com/api/v4/song/search";
+			var args = {
+	            'api_key': echonest_apikey,
+	            'format' : 'json', 
+	            'bucket': [ 'id:spotify', 'tracks', 'artist_location'],
+	            'min_latitude': min_lat,
+	            'max_latitude': max_lat,
+	            'min_longitude': min_lng,
+	            'max_longitude': max_lng,
+	            'results': 25,
+	            'sort': 'energy-asc'
+		    };
+
+			jQuery.ajaxSettings.traditional = true; // allow for multiple buckets
+
+			// sample output: http://developer.echonest.com/api/v4/song/search?api_key=YVK7EBOA6AZHLURKI&format=json&bucket=artist_location&bucket=tracks&min_latitude=42&max_latitude=43&min_longitude=-72&max_longitude=-71&bucket=id:spotify&results=25&sort=energy-asc
+			$.getJSON(url, args, 
+        		function(data) {
+        			if (data.response.status.code == 0) {
+		                songs = data.response.songs;
+		                var spotify_ids = "";
+		                $("#player").append("<h2>Songs by Artists from near " + locale + "</h2>");
+		                if (songs.length > 0) {
+		                    for (var i = 0; i < songs.length; i++) {
+		                        var song = songs[i];
+		                        try { 
+		                        	var id = song.tracks[0].foreign_id.replace('spotify:track:', '');
+									spotify_ids += id + ",";
+									var li = "<li>";
+		                        	li += song.title + " by " + song.artist_name + " from " + song.artist_location.location + "</li>";
+		                        	$("#player").append(li);
+		                        } catch (err) {
+
+		                        }
+							}
+							spotify_ids = spotify_ids.replace(/,$/, ""); // avoid addition of extra comma at end
+							getSpotifyPlayer(spotify_ids);
+		                } else {
+		                        alert("No results");
+		                }
+		            } else {
+		                alert("Trouble getting songs: " + data.response.status.message);
+		            }
+        		})
+        .error( 
+            function(data) {
+                alert("Location not recognized.");
+            }
+        );
+		}
+
+		function generatePlaylist(artist) {
+			var url = "http://developer.echonest.com/api/v4/playlist/static";
+			var args = {
+	            'api_key': echonest_apikey,
+	            'artist': artist.name,
+	            'format' : 'json', 
+	            'type': 'artist',
+	            'bucket': [ 'id:spotify', 'tracks'],
+	            'limit' : true,
+	            'results': 25
+		    };
+
+			jQuery.ajaxSettings.traditional = true; // allow for multipe buckets
+		    // sample output: http://developer.echonest.com/api/v4/playlist/static?api_key=YVK7EBOA6AZHLURKI&type=artist&results=10&artist=tufts+beelzebubs&bucket=id:spotify&bucket=tracks&limit=true
+			$.getJSON(url, args,
+				function(data) {
+					if (data.response.status.code == 0) {
+						var songs = data.response.songs;
+						var spotify_ids = "";
+						for (var i = 0; i < songs.length; i++) {
+							var id = songs[i].tracks[0].foreign_id.replace('spotify:track:', '');
+							spotify_ids += id + ",";
+						}
+						spotify_ids = spotify_ids.replace(/,$/, ""); // avoid addition of extra comma at end
+						getSpotifyPlayer(spotify_ids);
+					} else {
+						alert("Trouble downloading playlist: " + data.response.status.message);
+					}
+				})
+			.error (
+				function(data) {
+					alert("Could not generate playlist");
+				}
+			);
+		}
+
+		function getSpotifyPlayer(track_ids) {
+			$("#button").prepend("<h2>Welcome to " + locale + "</h2>");
+			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:' + locale + ':' + track_ids + '" frameborder="0" allowtransparency="true"></iframe>';
+			$("#button").append(player);
+		}
+
+		//http://themarklee.com/2014/04/03/pulling-json-data-open-data-api/
+		function generateRandomLocale() {
+			var state = "MA"; // default value
+
+			var states = [];
+
+			// pick a random number to gen state, city
+
+			// pick a city
+			//http://api.sba.gov/doc/geodata.html
+			var url = "http://api.sba.gov/geodata/city_county_links_for_state_of/" + state + ".json";
+
+			$.getJSON(url,
+				function(data) {
+					try {
+						var response = data.response;
+						var town = "";
+						for (var i = 0; i < response.length; i++) {
+							town = response[i].name;
+						}
+						fetchArtistsByLocation(town);
+					} catch (err) {
+						alert("Trouble downloading location information");
+					}
+				})
+			.error (
+				function(data) {
+					alert("Could not generate location");
+				}
+			);
+		}
+	</script>			
+			
+</head>
+
+<body>
+	<h1>Bandwagn</h1>
+	<nav>
+		<ul>
+			<li><a href="indextext.html">home</a></li>
+			<li><a href="history.html">history</a></li>
+		</ul>
+	</nav>
+	<div id="player">
+		<div id="button"></div>
+	</div>
+	<div><button id="advance">spin the wheel</button></div>
+</body>
+</html>
