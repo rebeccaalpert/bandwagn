@@ -2,11 +2,20 @@
 
 <html>
 <head>
-	<title>Bandwagn</title>
-	<meta charset=utf-8 />
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Bandwagn</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+	<link href="stylesheets/main.css" rel="stylesheet" />
 	<script>
 		var echonest_apikey = "YVK7EBOA6AZHLURKI";
 		var spotify_apikey = "";
@@ -20,9 +29,10 @@
 			var locale = getClientLocation();
 
 			$( "#advance" ).click(function() {
-  				$.get("bandwagn.herokuapp.com/getRandomLocation", function(data) {
+  				$.get("http://bandwagn.herokuapp.com/getRandomLocation", function(data) {
   					// data in format {"lat": xxx, "lng": xxx}
-  					geocodeClientLocation(data.lat, data.lng);
+  					json = JSON.parse(data);
+  					geocodeClientLocation(json.lat, json.lng);
   				});
 			});
 		});
@@ -179,16 +189,16 @@
         			if (data.response.status.code == 0) {
 		                songs = data.response.songs;
 		                var spotify_ids = "";
-		                $("#player").append("<h2>Songs by Artists from near " + locale + "</h2>");
+		                /*$("#player").append("<h2>Songs by Artists from near " + locale + "</h2>");*/
 		                if (songs.length > 0) {
 		                    for (var i = 0; i < songs.length; i++) {
 		                        var song = songs[i];
 		                        try { 
 		                        	var id = song.tracks[0].foreign_id.replace('spotify:track:', '');
 									spotify_ids += id + ",";
-									var li = "<li>";
+									/*var li = "<li>";
 		                        	li += song.title + " by " + song.artist_name + " from " + song.artist_location.location + "</li>";
-		                        	$("#player").append(li);
+		                        	$("#player").append(li);*/
 		                        } catch (err) {
 
 		                        }
@@ -246,57 +256,81 @@
 		}
 
 		function getSpotifyPlayer(track_ids) {
-			$("#button").prepend("<h2>Welcome to " + locale + "</h2>");
+			$("#city").text("Welcome to " + locale);
 			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:' + locale + ':' + track_ids + '" frameborder="0" allowtransparency="true"></iframe>';
-			$("#button").append(player);
+			$("#button").html(player);
+			// draw chart
+    		//google.load("visualization", "1", {packages:["geochart"]});
+      		//google.setOnLoadCallback(drawRegionsMap);
 		}
 
-		//http://themarklee.com/2014/04/03/pulling-json-data-open-data-api/
-		function generateRandomLocale() {
-			var state = "MA"; // default value
+      	function drawRegionsMap() {
+	      	var storedLocations = getClientLocations();
+	        /*var data = google.visualization.arrayToDataTable([
+	          ['City'],
+	          ['Stoughton'],
+	        ]);*/
+			if (storedLocations === null) {
+				alert("No data to display");
+			} else {
+		        var data = new google.visualization.DataTable();
 
-			var states = [];
+		        data.addColumn('string', 'City');
 
-			// pick a random number to gen state, city
+		        jQuery.each(storedLocations, function(index, value) {
+		        	data.addRow(["'" + this + "'"]);
+		        });
 
-			// pick a city
-			//http://api.sba.gov/doc/geodata.html
-			var url = "http://api.sba.gov/geodata/city_county_links_for_state_of/" + state + ".json";
+		        var options = {
+						        region: 'US',
+						        displayMode: 'markers'
+						      };
 
-			$.getJSON(url,
-				function(data) {
-					try {
-						var response = data.response;
-						var town = "";
-						for (var i = 0; i < response.length; i++) {
-							town = response[i].name;
-						}
-						fetchArtistsByLocation(town);
-					} catch (err) {
-						alert("Trouble downloading location information");
-					}
-				})
-			.error (
-				function(data) {
-					alert("Could not generate location");
+		        var chart = new google.visualization.GeoChart(document.getElementById('geochart'));
+
+		        chart.draw(data, options);
+		    }
+		}
+
+      function getClientLocations() {
+ 			var storedLocations = new Array();
+
+			if (localStorage) {
+  			// LocalStorage is supported!
+	  			if ("Bandwagn" in localStorage) {
+	  				storedLocations = JSON.parse(localStorage.getItem("Bandwagn"));
+	  				return storedLocations;
+				} else {
+					return null;
 				}
-			);
-		}
+			} else {
+  			// No support. Use a fallback such as browser cookies or store on the server.
+  				alert("Local storage not supported! Try a different browser.")
+			}
+ 		}
 	</script>			
 			
 </head>
 
 <body>
-	<h1>Bandwagn</h1>
-	<nav>
-		<ul>
-			<li><a href="indextext.html">home</a></li>
-			<li><a href="history.html">history</a></li>
-		</ul>
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+    		<div class="navbar-header">
+				<a class="navbar-brand" href="/">Bandwagn</a>
+			</div>
+		</div>
 	</nav>
-	<div id="player">
-		<div id="button"></div>
+
+		<div class="jumbotron text-center">
+			<h2 id="city"></h2>
+			<p class="lead">Settle in! Hear some music!</p>
+			<p id="button"></p>
+			<p><a class="btn btn-lg btn-success" role="button" id="advance">spin the wheel</a> or <a class="btn btn-lg btn-success" role="button" href="#map">see where you've been</a></p>
+		</div>
+
+	<div id="map" class="container text-center">
+		<p>Test!</p>
+		<div class="col-*-*" id="geochart"></div>
 	</div>
-	<div><button id="advance">spin the wheel</button></div>
 </body>
 </html>
