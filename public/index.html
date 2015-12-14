@@ -35,12 +35,6 @@
   					geocodeClientLocation(json.lat, json.lng);
   				});
 			});
-
-			$( "#seemap").click(function() {
-							// draw chart
-    		google.load("visualization", "1", {packages:["geochart"]});
-      		google.setOnLoadCallback(drawRegionsMap);
-			});
 		});
 
 		function getClientLocation() {
