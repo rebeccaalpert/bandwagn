@@ -19,7 +19,7 @@
   color: white;
   padding-top: 8em;
   padding-bottom: 8em;
-  height: 50%;
+  height: 100vh;
 }
   
 .jumbotron .btn-primary {
@@ -54,9 +54,9 @@
 }
 
 #map {
-  padding-top: 4em;
-  padding-bottom: 4em;
-  height: 50%;
+  padding-top: 3em;
+  padding-bottom: 5em;
+  height: 100vh;
 }
 
 #button {
