@@ -15,10 +15,10 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link href="stylesheets/main.css" rel="stylesheet" />
 	<script>
 		var echonest_apikey = "YVK7EBOA6AZHLURKI";
-		var spotify_apikey = "";
 		var locale = "Medford, MA";
 		var artists = {};
 		var myLat = 0;
@@ -34,6 +34,12 @@
   					json = JSON.parse(data);
   					geocodeClientLocation(json.lat, json.lng);
   				});
+			});
+
+			$( "#seemap").click(function() {
+							// draw chart
+    		google.load("visualization", "1", {packages:["geochart"]});
+      		google.setOnLoadCallback(drawRegionsMap);
 			});
 		});
 
@@ -259,9 +265,12 @@
 			$("#city").text("Welcome to " + locale);
 			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:' + locale + ':' + track_ids + '" frameborder="0" allowtransparency="true"></iframe>';
 			$("#button").html(player);
+
 			// draw chart
-    		//google.load("visualization", "1", {packages:["geochart"]});
-      		//google.setOnLoadCallback(drawRegionsMap);
+			setTimeout(function(){
+				google.load('visualization', '1', {
+					'callback':'drawRegionsMap', 'packages':['geochart']})
+			}, 2000);
 		}
 
       	function drawRegionsMap() {
@@ -323,14 +332,18 @@
 
 		<div class="jumbotron text-center">
 			<h2 id="city"></h2>
-			<p class="lead">Settle in! Hear some music!</p>
+			<p class="lead">Settle in! Hear some local music!</p>
 			<p id="button"></p>
-			<p><a class="btn btn-lg btn-success" role="button" id="advance">spin the wheel</a> or <a class="btn btn-lg btn-success" role="button" href="#map">see where you've been</a></p>
+			<div class="row">
+				<div class=".col-md-4">
+					<p><a class="btn btn-lg btn-success" role="button" id="advance">spin the wheel</a> or <a class="btn btn-lg btn-success" role="button" href="#map" id="seemap">see where you've been</a></p>
+				</div>
+			</div>
 		</div>
 
 	<div id="map" class="container text-center">
-		<p>Test!</p>
-		<div class="col-*-*" id="geochart"></div>
+		<h2>Cities you've visited (so far)</h2>
+		<div id="geochart"></div>
 	</div>
 </body>
 </html>
