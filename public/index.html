@@ -26,6 +26,8 @@
 
 		$(document).ready(function(){
 			// loading message
+			$("geochart").append("<p>You haven't been anywhere yet! Try spinning the wheel.</p>");
+			
 			var locale = getClientLocation();
 
 			$("[href='#advance']").on("click", function(e) {
