@@ -219,7 +219,8 @@
 		function getSpotifyPlayer(track_ids) {
 			$("#city").text("Welcome to " + locale);
 			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:' + locale + ':' + track_ids + '" frameborder="0" allowtransparency="true"></iframe>';
-			$("#button").html(player);
+			$("#button").empty();
+			$("#button").append(player);
 
 			// draw chart
 			setTimeout(function(){
