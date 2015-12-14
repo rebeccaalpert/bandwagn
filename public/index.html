@@ -90,7 +90,7 @@
 
  		function storeClientLocation(lat, lng) {
  			var currentLocation = new Array();
- 			currentLocation.push({lat, lng});
+ 			currentLocation.push("{"+lat+", " + lng + "}");
  			var storedLocations = new Array();
 
 			if (localStorage) {
