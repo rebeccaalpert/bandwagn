@@ -159,9 +159,6 @@
 		                        try { 
 		                        	var id = song.tracks[0].foreign_id.replace('spotify:track:', '');
 									spotify_ids += id + ",";
-									/*var li = "<li>";
-		                        	li += song.title + " by " + song.artist_name + " from " + song.artist_location.location + "</li>";
-		                        	$("#player").append(li);*/
 		                        } catch (err) {
 
 		                        }
@@ -180,42 +177,6 @@
                 alert("Location not recognized.");
             }
         );
-		}
-
-		function generatePlaylist(artist) {
-			var url = "http://developer.echonest.com/api/v4/playlist/static";
-			var args = {
-	            'api_key': echonest_apikey,
-	            'artist': artist.name,
-	            'format' : 'json', 
-	            'type': 'artist',
-	            'bucket': [ 'id:spotify', 'tracks'],
-	            'limit' : true,
-	            'results': 25
-		    };
-
-			jQuery.ajaxSettings.traditional = true; // allow for multipe buckets
-		    // sample output: http://developer.echonest.com/api/v4/playlist/static?api_key=YVK7EBOA6AZHLURKI&type=artist&results=10&artist=tufts+beelzebubs&bucket=id:spotify&bucket=tracks&limit=true
-			$.getJSON(url, args,
-				function(data) {
-					if (data.response.status.code == 0) {
-						var songs = data.response.songs;
-						var spotify_ids = "";
-						for (var i = 0; i < songs.length; i++) {
-							var id = songs[i].tracks[0].foreign_id.replace('spotify:track:', '');
-							spotify_ids += id + ",";
-						}
-						spotify_ids = spotify_ids.replace(/,$/, ""); // avoid addition of extra comma at end
-						getSpotifyPlayer(spotify_ids);
-					} else {
-						alert("Trouble downloading playlist: " + data.response.status.message);
-					}
-				})
-			.error (
-				function(data) {
-					alert("Could not generate playlist");
-				}
-			);
 		}
 
 		function getSpotifyPlayer(track_ids) {
