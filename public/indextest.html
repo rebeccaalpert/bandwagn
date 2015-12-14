@@ -11,8 +11,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link href="stylesheets/main.css" rel="stylesheet" />
@@ -25,8 +26,6 @@
 
 		$(document).ready(function(){
 			// loading message
-			$("#geochart").append("<p>You haven't been anywhere yet! Try spinning the wheel.</p>");
-
 			var locale = getClientLocation();
 
 			$( "#advance" ).click(function() {
@@ -35,6 +34,12 @@
   					json = JSON.parse(data);
   					geocodeClientLocation(json.lat, json.lng);
   				});
+			});
+
+			$( "#seemap").click(function() {
+							// draw chart
+    		google.load("visualization", "1", {packages:["geochart"]});
+      		google.setOnLoadCallback(drawRegionsMap);
 			});
 		});
 
@@ -89,8 +94,7 @@
  		}
 
  		function storeClientLocation(lat, lng) {
- 			var currentLocation = new Array();
- 			currentLocation.push("{"+lat+", " + lng + "}");
+ 			var currentLocation = [{lat, lng}];
  			var storedLocations = new Array();
 
 			if (localStorage) {
@@ -125,6 +129,45 @@
 			}
 		}
 
+		/*// currently only generates playlist for one artist, though it shows all of them.
+		function fetchArtistsByLocation(locale) {
+			var url = "http://developer.echonest.com/api/v4/artist/search";
+
+			$.getJSON(url, 
+				{ 
+	            'api_key': echonest_apikey,
+	            'artist_location': locale, 
+	            'results' : 5, 
+	            'sort': 'hotttnesss-desc'
+        		}, 
+        		function(data) {
+        			if (data.response.status.code == 0) {
+		                artists = data.response.artists;
+		                //$("#results").append("<h2>Artists from near " + locale + "</h2>");
+		                if (artists.length > 0) {
+		                    for (var i = 0; i < artists.length; i++) {
+		                        var artist = artists[i];
+		                        //var li = $("<li>");
+		                        //li.text(artist.name);
+		                        //$("#results").append(li);
+		                    }
+		                    console.log(artists[0].name);
+		                    generatePlaylist(artists[0]);
+		                } else {
+		                        alert("No results");
+		                }
+		            } else {
+		                alert("Trouble getting artists: " + data.response.status.message);
+		            }
+        		})
+        .error( 
+            function(data) {
+                alert("Location not recognized. Location must be a city, region, or country.");
+            }
+        );
+		}*/
+
+		// 
 		function fetchSongsByLocation(lat, lng) {
 			var min_lat = Math.round(lat);
 			var max_lat = min_lat + 1;
@@ -159,6 +202,9 @@
 		                        try { 
 		                        	var id = song.tracks[0].foreign_id.replace('spotify:track:', '');
 									spotify_ids += id + ",";
+									/*var li = "<li>";
+		                        	li += song.title + " by " + song.artist_name + " from " + song.artist_location.location + "</li>";
+		                        	$("#player").append(li);*/
 		                        } catch (err) {
 
 		                        }
@@ -179,32 +225,46 @@
         );
 		}
 
+		function generatePlaylist(artist) {
+			var url = "http://developer.echonest.com/api/v4/playlist/static";
+			var args = {
+	            'api_key': echonest_apikey,
+	            'artist': artist.name,
+	            'format' : 'json', 
+	            'type': 'artist',
+	            'bucket': [ 'id:spotify', 'tracks'],
+	            'limit' : true,
+	            'results': 25
+		    };
+
+			jQuery.ajaxSettings.traditional = true; // allow for multipe buckets
+		    // sample output: http://developer.echonest.com/api/v4/playlist/static?api_key=YVK7EBOA6AZHLURKI&type=artist&results=10&artist=tufts+beelzebubs&bucket=id:spotify&bucket=tracks&limit=true
+			$.getJSON(url, args,
+				function(data) {
+					if (data.response.status.code == 0) {
+						var songs = data.response.songs;
+						var spotify_ids = "";
+						for (var i = 0; i < songs.length; i++) {
+							var id = songs[i].tracks[0].foreign_id.replace('spotify:track:', '');
+							spotify_ids += id + ",";
+						}
+						spotify_ids = spotify_ids.replace(/,$/, ""); // avoid addition of extra comma at end
+						getSpotifyPlayer(spotify_ids);
+					} else {
+						alert("Trouble downloading playlist: " + data.response.status.message);
+					}
+				})
+			.error (
+				function(data) {
+					alert("Could not generate playlist");
+				}
+			);
+		}
+
 		function getSpotifyPlayer(track_ids) {
-			var track = track_ids.split(",")[0];
-			console.log(track);
-			drawMobileSpotifyPlayer(track);
-
-			// mobile
-		}
-
-		function drawDesktopSpotifyPlayer(tracks) {
 			$("#city").text("Welcome to " + locale);
-			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:' + locale + ':' + tracks + '" frameborder="0" allowtransparency="true"></iframe>';
-			$("#button").empty();
-			$("#button").append(player);
-
-			// draw chart
-			setTimeout(function(){
-				google.load('visualization', '1', {
-					'callback':'drawRegionsMap', 'packages':['geochart']})
-			}, 1000);	
-		}
-
-		function drawMobileSpotifyPlayer(track) {
-			$("#city").text("Welcome to " + locale);
-			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:track:' + track + '" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>';
-			$("#button").empty();
-			$("#button").append(player);
+			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:' + locale + ':' + track_ids + '" frameborder="0" allowtransparency="true"></iframe>';
+			$("#button").html(player);
 
 			// draw chart
 			setTimeout(function(){
@@ -232,7 +292,6 @@
 						        displayMode: 'markers'
 						      };
 
-				$("#geochart").empty();
 		        var chart = new google.visualization.GeoChart(document.getElementById('geochart'));
 
 		        chart.draw(data, options);
@@ -271,10 +330,10 @@
 	<div class="jumbotron text-center">
 		<h2 id="city"></h2>
 		<p class="lead">Settle in! Hear some local music!</p>
-		<div class="row" id="button"></div>
-		<div class="row">
+		<div id="button"></div>
+		<div>
 		    <a class="btn btn-success btn-lg" id="advance" role="button">spin the wheel</a>
-		   	<a class="btn btn-success btn-lg" href="#map" role="button" id="seemap">see where you've been</a>
+		    <a class="btn btn-success btn-lg" href="#map" role="button" id="seemap">see where you've been</a>
 	    </div>
 	</div>
 
