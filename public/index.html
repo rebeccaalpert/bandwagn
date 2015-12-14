@@ -89,7 +89,8 @@
  		}
 
  		function storeClientLocation(lat, lng) {
- 			var currentLocation = [{lat, lng}];
+ 			var currentLocation = new Array();
+ 			currentLocation.push({lat, lng});
  			var storedLocations = new Array();
 
 			if (localStorage) {
@@ -220,6 +221,19 @@
 		function getSpotifyPlayer(track_ids) {
 			$("#city").text("Welcome to " + locale);
 			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:' + locale + ':' + track_ids + '" frameborder="0" allowtransparency="true"></iframe>';
+			$("#button").empty();
+			$("#button").append(player);
+
+			// draw chart
+			setTimeout(function(){
+				google.load('visualization', '1', {
+					'callback':'drawRegionsMap', 'packages':['geochart']})
+			}, 1000);
+		}
+
+		function getMobileSpotifyPlayer(track_id) {
+			$("#city").text("Welcome to " + locale);
+			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:track:' + track_id + '" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>';
 			$("#button").empty();
 			$("#button").append(player);
 
