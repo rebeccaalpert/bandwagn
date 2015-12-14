@@ -23,9 +23,6 @@ var db = MongoClient.connect(mongoUri, function(error, databaseConnection) {
 // Serve static content
 app.use(express.static(__dirname + '/public'));
 
-// serve static html files in public directory
-app.use(express.static(__dirname + '/public'));
-
 function isValid(lat, lng) {
 	if (validator.isNull(lat) || validator.isNull(lng)) {
 		return false;
@@ -34,40 +31,7 @@ function isValid(lat, lng) {
 	}
 }
 
-app.post('/addLocation', function(request, response) {
-	// enable CORS
-	response.header("Access-Control-Allow-Origin", "*");
-	response.header("Access-Control-Allow-Headers", "X-Requested-With");
-
-	var lat = parseFloat(request.body.lat);
-	var lng = parseFloat(request.body.lng);
-
-	if (isValid(lat, lng)) {
-		// set up new column
-		var toInsert = {
-		"lat": lat,
-		"lng": lng,
-		};	
-
-		db.collection('locations', function(error, coll) {
-			var id = coll.insert(toInsert, function(error, saved) {
-				if (error) {
-					response.send(500, "Error" + error);
-				}
-				else { // successfully inserted
-					response.send(200);
-				}
-			});
-		});
-	} else {
-		response.send({"error":"Whoops, something is wrong with your data!"});
-	}
-});
-
-// send location API
-// Returns a JSON string. Submits check-in from any domain.
-// The mandatory fields and exact field names for submission to this API are lat and lng
-// Successful submission of these two pieces of data shall return a JSON string that is an array of objects.
+// Returns a random location from the database in the format: {"lat": 40.74838, "lng": -73.996705}
 app.get('/getRandomLocation', function(request, response) {
 	// enable CORS
 	response.header("Access-Control-Allow-Origin", "*");
@@ -83,7 +47,7 @@ app.get('/getRandomLocation', function(request, response) {
 				}
 			});
 		} else {
-		response.send({"error":"Whoops, something is wrong with your data!"});
+			response.send({"error":"Whoops, something is wrong with our data!"});
 		}
 	});
 });
@@ -94,28 +58,8 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-// Accessing this on a web browser shall display list of users sorted in descending order by timestamp
-app.get('/locations', function(request, response) {
-  	response.set('Content-Type', 'text/html');
-	var page = '';
-	db.collection('locations', function(error, collection) {
-		collection.find().sort( { created_at: -1 } ).toArray(function(error, cursor) {
-			if (!error) {
-				page += '<!DOCTYPE HTML><html><head><title>Locations</title><meta name="viewport" content="width=device-width" /></head><body><h1>Users</h1>';
-				for (var count = 0; count < cursor.length; count++) {
-					page += "<div><p>" + cursor[count].locale + "</p></div>";
-				}
-				userPage += "</body></html>"
-				response.send(page);
-			} else {
-				response.send('<!DOCTYPE HTML><html><head><title>Locations</title><meta name="viewport" content="width=device-width" /></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
-			}
-		});
-	});
-});
-
 app.get('/', function(request, response) {
-	response.sendFile(__dirname + '/public/indextest.html');
+	response.sendFile(__dirname + '/public/index.html');
 });
 
 app.listen(process.env.PORT || 5000);

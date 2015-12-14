@@ -2,11 +2,24 @@
   background: #2d2d30;
 }
 
+.footer {
+  background: #2d2d30;
+  color: white;
+  padding-top: 2em;
+  padding-bottom: 1em;
+}
+
+.footer a {
+  color: #d9ccee;
+  margin: 0em;
+}
+
 .jumbotron {
   background: #2d2d30;
   color: white;
   padding-top: 8em;
   padding-bottom: 8em;
+  height: 50%;
 }
   
 .jumbotron .btn-primary {
@@ -30,14 +43,20 @@
   opacity: 0.9;
 }
 
+.navbar a {
+  color: #d9ccee;
+}
+
 #geochart {
   width: auto;
   margin: 0 auto !important;
+  max-width: 70%;
 }
 
-.container {
+#map {
   padding-top: 4em;
   padding-bottom: 4em;
+  height: 50%;
 }
 
 #button {

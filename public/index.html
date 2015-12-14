@@ -129,45 +129,6 @@
 			}
 		}
 
-		/*// currently only generates playlist for one artist, though it shows all of them.
-		function fetchArtistsByLocation(locale) {
-			var url = "http://developer.echonest.com/api/v4/artist/search";
-
-			$.getJSON(url, 
-				{ 
-	            'api_key': echonest_apikey,
-	            'artist_location': locale, 
-	            'results' : 5, 
-	            'sort': 'hotttnesss-desc'
-        		}, 
-        		function(data) {
-        			if (data.response.status.code == 0) {
-		                artists = data.response.artists;
-		                //$("#results").append("<h2>Artists from near " + locale + "</h2>");
-		                if (artists.length > 0) {
-		                    for (var i = 0; i < artists.length; i++) {
-		                        var artist = artists[i];
-		                        //var li = $("<li>");
-		                        //li.text(artist.name);
-		                        //$("#results").append(li);
-		                    }
-		                    console.log(artists[0].name);
-		                    generatePlaylist(artists[0]);
-		                } else {
-		                        alert("No results");
-		                }
-		            } else {
-		                alert("Trouble getting artists: " + data.response.status.message);
-		            }
-        		})
-        .error( 
-            function(data) {
-                alert("Location not recognized. Location must be a city, region, or country.");
-            }
-        );
-		}*/
-
-		// 
 		function fetchSongsByLocation(lat, lng) {
 			var min_lat = Math.round(lat);
 			var max_lat = min_lat + 1;
@@ -270,15 +231,12 @@
 			setTimeout(function(){
 				google.load('visualization', '1', {
 					'callback':'drawRegionsMap', 'packages':['geochart']})
-			}, 2000);
+			}, 1000);
 		}
 
       	function drawRegionsMap() {
 	      	var storedLocations = getClientLocations();
-	        /*var data = google.visualization.arrayToDataTable([
-	          ['City'],
-	          ['Stoughton'],
-	        ]);*/
+
 			if (storedLocations === null) {
 				alert("No data to display");
 			} else {
@@ -330,19 +288,25 @@
 		</div>
 	</nav>
 
-		<div class="jumbotron text-center">
-			<h2 id="city"></h2>
-			<p class="lead">Settle in! Hear some local music!</p>
-			<div id="button"></div>
+	<div class="jumbotron text-center">
+		<h2 id="city"></h2>
+		<p class="lead">Settle in! Hear some local music!</p>
+		<div id="button"></div>
 			<div>
-		      <a class="btn btn-success btn-lg" id="advance" role="button">spin the wheel</a>
-		      <a class="btn btn-success btn-lg" href="#map" role="button" id="seemap">see where you've been</a>
+		    	<a class="btn btn-success btn-lg" id="advance" role="button">spin the wheel</a>
+		    	<a class="btn btn-success btn-lg" href="#map" role="button" id="seemap">see where you've been</a>
 	    	</div>
-		</div>
+	</div>
 
 	<div id="map" class="container text-center">
 		<h2>Cities you've visited</h2>
 		<div id="geochart"></div>
 	</div>
+
+	<footer class="footer">
+    	<div class="container text-center">
+        	<p>powered by <a href="https://developers.google.com/">Google</a>, <a href="https://www.spotify.com">Spotify</a>, and the <a href="http://the.echonest.com/">Echonest</a></p>
+     	</div>
+    </footer>
 </body>
 </html>
