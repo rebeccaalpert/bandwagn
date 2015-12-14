@@ -28,7 +28,7 @@
 			// loading message
 			var locale = getClientLocation();
 
-			$( "[href='#advance']" ).click(function(e) {
+			$("[href='#advance']").on("click", function(e) {
   				$.get("http://bandwagn.herokuapp.com/getRandomLocation", function(data) {
   					// data in format {"lat": xxx, "lng": xxx}
   					json = JSON.parse(data);
