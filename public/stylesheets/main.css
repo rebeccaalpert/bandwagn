@@ -5,7 +5,7 @@
 .jumbotron {
   background: #2d2d30;
   color: white;
-  padding-top: 6em;
+  padding-top: 8em;
   padding-bottom: 6em;
 }
   
@@ -31,12 +31,15 @@
 }
 
 #geochart {
-  max-width: 75%;
   width: auto;
   margin: 0 auto !important;
 }
 
 .container {
   padding-top: 6em;
-  padding-bottom: 6em;
+  padding-bottom: 4em;
+}
+
+#button {
+  margin-top: 2em;
 }
