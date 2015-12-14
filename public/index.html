@@ -26,11 +26,11 @@
 
 		$(document).ready(function(){
 			// loading message
-			$("geochart").append("<p>You haven't been anywhere yet! Try spinning the wheel.</p>");
+			$("#geochart").append("<p>You haven't been anywhere yet! Try spinning the wheel.</p>");
 			
 			var locale = getClientLocation();
 
-			$("[href='#advance']").on("click", function(e) {
+			$( "#advance" ).click(function() {
   				$.get("http://bandwagn.herokuapp.com/getRandomLocation", function(data) {
   					// data in format {"lat": xxx, "lng": xxx}
   					json = JSON.parse(data);
@@ -250,6 +250,7 @@
 						        displayMode: 'markers'
 						      };
 
+				$("#geochart").empty();
 		        var chart = new google.visualization.GeoChart(document.getElementById('geochart'));
 
 		        chart.draw(data, options);
@@ -290,7 +291,7 @@
 		<p class="lead">Settle in! Hear some local music!</p>
 		<div id="button"></div>
 			<div>
-		    	<a class="btn btn-success btn-lg" id="advance" href="#advance" role="button">spin the wheel</a>
+		    	<a class="btn btn-success btn-lg" id="advance" role="button">spin the wheel</a>
 		    	<a class="btn btn-success btn-lg" href="#map" role="button" id="seemap">see where you've been</a>
 	    	</div>
 	</div>
