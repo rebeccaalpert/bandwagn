@@ -47,7 +47,6 @@ body {
   border: 0;
   font-size: 11px !important;
   letter-spacing: 4px;
-  opacity: 0.9;
   width: 100%;
   overflow: hidden;
 }
@@ -90,5 +89,9 @@ body {
     margin: 0 auto !important;
     max-width: 100%;
     overflow: hidden;
+  }
+
+  .jumbotron {
+    padding-top: 5em;
   }
 }
