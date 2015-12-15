@@ -233,9 +233,6 @@
 		        var chart = new google.visualization.GeoChart(document.getElementById('geochart'));
 
 		        chart.draw(data, options);
-
-		        myLat = 0;
-		        myLng = 0;
 		    }
 		}
 
@@ -257,11 +254,7 @@
  		}
 
  		function sendLocationToDB() {
- 			if (myLat === 0 || myLng === 0) {
- 				return;
- 			} else {
- 				$.post( "http://bandwagn.herokuapp.com/getRandomLocation", { "name": locale, "lat": myLat, "lng": myLng } );
- 			}
+ 			$.post( "http://bandwagn.herokuapp.com/getRandomLocation", { "name": locale, "lat": myLat, "lng": myLng } );
  		}
 	</script>			
 			
