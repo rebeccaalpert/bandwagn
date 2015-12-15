@@ -45,7 +45,7 @@ function notInDB(lat, lng) {
 	}
 }
 
-app.post('/sendLocation', function(request, response) {
+/*app.post('/sendLocation', function(request, response) {
 	var name = toString(request.body.name);
 	name = escape(name);
 	var lat = parseFloat(request.body.lat);
@@ -77,7 +77,7 @@ app.post('/sendLocation', function(request, response) {
 	} else {
 		response.send(500);
 	}
-});
+});*/
 
 // returns a random location from the database in the format: {"lat": 40.74838, "lng": -73.996705}
 app.get('/getRandomLocation', function(request, response) {
