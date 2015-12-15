@@ -23,24 +23,35 @@ var db = MongoClient.connect(mongoUri, function(error, databaseConnection) {
 // Serve static content
 app.use(express.static(__dirname + '/public'));
 
-function isValid(lat, lng) {
-	if (validator.isNull(lat) || validator.isNull(lng)) {
+function isValid(name, lat, lng) {
+	if (validator.isNull(name) || validator.isNull(lat) || validator.isNull(lng)) {
 		return false;
 	} else {
 		return true;
 	}
 }
 
-app.post('/sendLocation', function(request, response) {
-	response.header("Access-Control-Allow-Origin", "*");
-	response.header("Access-Control-Allow-Headers", "X-Requested-With");
+function notInDB(lat, lng) {
+	db.collection('locations', function(error, collection) {
+		if (!error) {
+			collection.find({"lat":lat, "lng": lng}, function(err, items) {
+	          if(err) {
+	              return true;
+	          }
+	          else {
+	            return false; 
+	          }
+		});
+	}
+}
 
+app.post('/sendLocation', function(request, response) {
 	var name = toString(request.body.name);
 	name = escape(name);
 	var lat = parseFloat(request.body.lat);
 	var lng = parseFloat(request.body.lng);
 
-	if (isValid(lat, lng)) {
+	if (isValid(name, lat, lng) && notInDB(lat, lng)) {
 		var toInsert = {
 			"name": name,
 			"lat": lat,
