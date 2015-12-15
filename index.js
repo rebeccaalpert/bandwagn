@@ -62,13 +62,7 @@ app.post('/sendLocation', function(request, response) {
 					response.send(500);
 				}
 				else {
-					coll.find().toArray(function(err, items) {
-						if (!err) {
-							response.send(200);
-						} else {
-							response.send(500);
-						}
-					});
+					response.send(200);
 				}
 			});
 		});
