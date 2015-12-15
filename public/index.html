@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <title>BandWagn</title>
+    <title>Bandwagn</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
@@ -16,13 +16,15 @@
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link href="stylesheets/main.css" rel="stylesheet" />
 	<script>
-		var echonest_apikey = "API_KEY";
+		var echonest_apikey = "YVK7EBOA6AZHLURKI";
 		var locale = "Medford, MA";
 		var artists = {};
 		var myLat = 0;
 		var myLng = 0;
 
 		$(document).ready(function(){
+			localStorage.clear();
+
 			// loading message
 			$("#geochart").append("<p>You haven't been anywhere yet! Try spinning the wheel.</p>");
 
@@ -280,9 +282,9 @@
 
 	<footer class="footer">
     	<div class="container text-center">
-        	<p>powered by <a href="https://developers.google.com/">Google</a>, <a href="https://www.spotify.com">Spotify</a>, and the <a href="http://the.echonest.com/">Echonest</a></p>
-        <p>Bandwagn: find bands near your location, and discover new artists</p>
-        <p>copyright &copy; 2015 Bandwagn</p>
+	        <p>Bandwagn: discover new artists based on geography!</p>
+	        <p>Powered by <a href="https://developers.google.com/">Google</a>, <a href="https://www.spotify.com">Spotify</a>, and the <a href="http://the.echonest.com/">Echonest</a></p>
+	        <p>copyright &copy; 2015 Bandwagn</p>
         </div>
     </footer>
 </body>
