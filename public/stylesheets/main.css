@@ -5,6 +5,10 @@
   padding-bottom: 1em;
 }
 
+body {
+  width: 100vm;
+}
+
 .footer a {
   color: #d9ccee;
   margin: 0em;
