@@ -177,6 +177,8 @@
 		}
 
 		function getRandomTrack(spotify_ids) {
+			$("#city").text("Welcome to " + locale);
+			$("#button").append("<p>Loading music...</p>");
 			drawSpotifyPlayer(spotify_ids[getRandomInt(0, spotify_ids.length)]);
 		}
 
@@ -185,7 +187,6 @@
 		}
 
 		function drawSpotifyPlayer(track) {
-			$("#city").text("Welcome to " + locale);
 			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:track:' + track + '" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>';
 			$("#button").empty();
 			$("#button").append(player);
