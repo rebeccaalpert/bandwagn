@@ -150,20 +150,18 @@
         		function(data) {
         			if (data.response.status.code == 0) {
 		                songs = data.response.songs;
-		                var spotify_ids = "";
-		                /*$("#player").append("<h2>Songs by Artists from near " + locale + "</h2>");*/
+		                var spotify_ids = new Array();
 		                if (songs.length > 0) {
 		                    for (var i = 0; i < songs.length; i++) {
 		                        var song = songs[i];
 		                        try { 
 		                        	var id = song.tracks[0].foreign_id.replace('spotify:track:', '');
-									spotify_ids += id + ",";
+									spotify_ids.push(id);
 		                        } catch (err) {
 
-		                        }
+		                       }
 							}
-							spotify_ids = spotify_ids.replace(/,$/, ""); // avoid addition of extra comma at end
-							getSpotifyPlayer(spotify_ids);
+							getRandomTrack(spotify_ids);
 		                } else {
 		                        alert("No results");
 		                }
@@ -178,25 +176,15 @@
         );
 		}
 
-		function getSpotifyPlayer(track_ids) {
-			var track = track_ids.split(",")[0];
-			drawMobileSpotifyPlayer(track);
+		function getRandomTrack(spotify_ids) {
+			drawSpotifyPlayer(spotify_ids[getRandomInt(0, spotify_ids.length)]);
 		}
 
-		function drawDesktopSpotifyPlayer(tracks) {
-			$("#city").text("Welcome to " + locale);
-			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:' + locale + ':' + tracks + '" frameborder="0" allowtransparency="true"></iframe>';
-			$("#button").empty();
-			$("#button").append(player);
-
-			// draw chart
-			setTimeout(function(){
-				google.load('visualization', '1', {
-					'callback':'drawRegionsMap', 'packages':['geochart']})
-			}, 1000);	
+		function getRandomInt(min, max) {
+		  return Math.floor(Math.random() * (max - min)) + min;
 		}
 
-		function drawMobileSpotifyPlayer(track) {
+		function drawSpotifyPlayer(track) {
 			$("#city").text("Welcome to " + locale);
 			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:track:' + track + '" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>';
 			$("#button").empty();
@@ -283,7 +271,7 @@
     	<div class="container text-center">
 	        <p>Bandwagn: discover new artists based on geography!</p>
 	        <p>Powered by <a href="https://developers.google.com/">Google</a>, <a href="https://www.spotify.com">Spotify</a>, and the <a href="http://the.echonest.com/">Echonest</a></p>
-	        <p>copyright &copy; 2015 Bandwagn</p>
+	        <p>&copy; 2015</p>
         </div>
     </footer>
 </body>
