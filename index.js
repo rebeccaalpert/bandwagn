@@ -34,7 +34,7 @@ function isValid(name, lat, lng) {
 function notInDB(lat, lng) {
 	db.collection('locations', function(error, collection) {
 		if (!error) {
-			collection.find({"lat":lat, "lng": lng}, function(err, items) {
+			collection.findOne({"lat":lat, "lng": lng}, function(err, items) {
 	          if(err) {
 	              return true;
 	          }
