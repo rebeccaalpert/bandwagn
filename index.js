@@ -31,7 +31,7 @@ function isValid(lat, lng) {
 	}
 }
 
-// Returns a random location from the database in the format: {"lat": 40.74838, "lng": -73.996705}
+// returns a random location from the database in the format: {"lat": 40.74838, "lng": -73.996705}
 app.get('/getRandomLocation', function(request, response) {
 	// enable CORS
 	response.header("Access-Control-Allow-Origin", "*");
@@ -59,7 +59,7 @@ function getRandomInt(min, max) {
 }
 
 app.get('/', function(request, response) {
-	response.sendFile(__dirname + '/public/index.html');
+	response.sendFile(__dirname + '/public/indextest.html');
 });
 
 app.listen(process.env.PORT || 5000);

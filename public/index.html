@@ -9,7 +9,6 @@
     <title>Bandwagn</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
@@ -17,7 +16,7 @@
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link href="stylesheets/main.css" rel="stylesheet" />
 	<script>
-		var echonest_apikey = "YVK7EBOA6AZHLURKI";
+		var echonest_apikey = "YOUR_KEY";
 		var locale = "Medford, MA";
 		var artists = {};
 		var myLat = 0;
@@ -174,17 +173,14 @@
         		})
         .error( 
             function(data) {
-                alert("Location not recognized.");
+                alert("Location not recognized. Your browser may be blocking app functionality.");
             }
         );
 		}
 
 		function getSpotifyPlayer(track_ids) {
 			var track = track_ids.split(",")[0];
-			console.log(track);
 			drawMobileSpotifyPlayer(track);
-
-			// mobile
 		}
 
 		function drawDesktopSpotifyPlayer(tracks) {

@@ -9,7 +9,6 @@
     "mongodb": "latest",
     "body-parser": "latest",
     "validator": "latest",
-    "bootstrap": "latest"
   },
   "engines": {
     "node": "0.12.7"
