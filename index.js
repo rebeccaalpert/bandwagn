@@ -23,54 +23,6 @@ var db = MongoClient.connect(mongoUri, function(error, databaseConnection) {
 // Serve static content
 app.use(express.static(__dirname + '/public'));
 
-function isValid(name, lat, lng) {
-	if (validator.isNull(name) || validator.isNull(lat) || validator.isNull(lng)) {
-		return false;
-	} else {
-		return true;
-	}
-}
-
-function notInDB(lat, lng) {
-	db.collection('locations', function(error, collection) {
-		if (!error) {
-			if (collection.find.count() > 0) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-	});
-}
-
-app.post('/sendLocation', function(request, response) {
-	var name = toString(request.body.name);
-	name = escape(name);
-	var lat = parseFloat(request.body.lat);
-	var lng = parseFloat(request.body.lng);
-
-	if (isValid(name, lat, lng) && notInDB(lat, lng)) {
-		var toInsert = {
-			"name": name,
-			"lat": lat,
-			"lng": lng,
-		};	
-
-		db.collection('locations', function(error, coll) {
-			var id = coll.insert(toInsert, function(error, saved) {
-				if (error) {
-					response.send(500, "Oops");
-				}
-				else {
-					response.send(200);
-				}
-			});
-		});
-	} else {
-		response.send(500, "Not valid");
-	}
-});
-
 // returns a random location from the database in the format: {"lat": 40.74838, "lng": -73.996705}
 app.get('/getRandomLocation', function(request, response) {
 	// enable CORS

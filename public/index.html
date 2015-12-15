@@ -164,7 +164,6 @@
 							}
 							spotify_ids = spotify_ids.replace(/,$/, ""); // avoid addition of extra comma at end
 							getSpotifyPlayer(spotify_ids);
-							sendLocationToDB();
 		                } else {
 		                        alert("No results");
 		                }
@@ -251,10 +250,6 @@
   			// No support. Use a fallback such as browser cookies or store on the server.
   				alert("Local storage not supported! Try a different browser.")
 			}
- 		}
-
- 		function sendLocationToDB() {
- 			$.post( "http://bandwagn.herokuapp.com/sendLocation", { "name": locale, "lat": myLat, "lng": myLng } );
  		}
 	</script>			
 			
