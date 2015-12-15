@@ -20,6 +20,7 @@ body {
   padding-top: 8em;
   padding-bottom: 8em;
   height: 100%;
+  width: 100%;
 }
   
 .jumbotron .btn-primary {
@@ -31,7 +32,6 @@ body {
 
 .jumbotron p {
   color: #d9ccee;
-  max-width: 75%;
   margin: 1em auto 2em; }
 
 .navbar {
@@ -57,6 +57,7 @@ body {
   padding-top: 3em;
   padding-bottom: 5em;
   height: 100%;
+  width: 100%;
 }
 
 #button {
