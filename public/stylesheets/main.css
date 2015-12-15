@@ -51,6 +51,7 @@ body {
   width: auto;
   margin: 0 auto !important;
   max-width: 70%;
+  padding: 0em;
 }
 
 #map {
@@ -74,5 +75,6 @@ body {
     width: auto;
     margin: 0 auto !important;
     max-width: 100%;
+    padding: 0em;
   }
 }
