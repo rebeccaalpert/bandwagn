@@ -31,6 +31,43 @@ function isValid(lat, lng) {
 	}
 }
 
+app.post('/sendLocation', function(request, response) {
+	response.header("Access-Control-Allow-Origin", "*");
+	response.header("Access-Control-Allow-Headers", "X-Requested-With");
+
+	var name = toString(request.body.name);
+	name = escape(name);
+	var lat = parseFloat(request.body.lat);
+	var lng = parseFloat(request.body.lng);
+
+	if (isValid(lat, lng)) {
+		var toInsert = {
+			"name": name,
+			"lat": lat,
+			"lng": lng,
+		};	
+
+		db.collection('locations', function(error, coll) {
+			var id = coll.insert(toInsert, function(error, saved) {
+				if (error) {
+					response.send(500);
+				}
+				else {
+					coll.find().toArray(function(err, items) {
+						if (!err) {
+							response.send(200);
+						} else {
+							response.send(500);
+						}
+					});
+				}
+			});
+		});
+	} else {
+		response.send(500);
+	}
+});
+
 // returns a random location from the database in the format: {"lat": 40.74838, "lng": -73.996705}
 app.get('/getRandomLocation', function(request, response) {
 	// enable CORS
