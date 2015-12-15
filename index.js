@@ -34,18 +34,16 @@ function isValid(name, lat, lng) {
 function notInDB(lat, lng) {
 	db.collection('locations', function(error, collection) {
 		if (!error) {
-			collection.findOne({"lat":lat, "lng": lng}, function(err, items) {
-	          if(err) {
-	              return true;
-	          }
-	          else {
-	            return false; 
-	          }
-		});
-	}
+			if (collection.find.count() > 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+	});
 }
 
-/*app.post('/sendLocation', function(request, response) {
+app.post('/sendLocation', function(request, response) {
 	var name = toString(request.body.name);
 	name = escape(name);
 	var lat = parseFloat(request.body.lat);
@@ -77,7 +75,7 @@ function notInDB(lat, lng) {
 	} else {
 		response.send(500);
 	}
-});*/
+});
 
 // returns a random location from the database in the format: {"lat": 40.74838, "lng": -73.996705}
 app.get('/getRandomLocation', function(request, response) {
