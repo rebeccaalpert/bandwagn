@@ -59,7 +59,7 @@ app.post('/sendLocation', function(request, response) {
 		db.collection('locations', function(error, coll) {
 			var id = coll.insert(toInsert, function(error, saved) {
 				if (error) {
-					response.send(500);
+					response.send(500, "Oops");
 				}
 				else {
 					response.send(200);
@@ -67,7 +67,7 @@ app.post('/sendLocation', function(request, response) {
 			});
 		});
 	} else {
-		response.send(500);
+		response.send(500, "Not valid");
 	}
 });
 
