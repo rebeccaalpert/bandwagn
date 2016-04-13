@@ -19,6 +19,7 @@ Bandwagn was my final project for Comp 20, Web Programming, in fall 2015 at Tuft
 * MongoDB database of U.S. cities (derived from [U.S. Cities Data](http://simplemaps.com/resources/us-cities-data))
 
 **Algorithms or Special Techniques**
+
 Serve random latitudes and longitudes from the database. Derive city and state from Google reverse coder.
 
 **APIs**
