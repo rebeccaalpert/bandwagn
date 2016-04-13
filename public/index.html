@@ -16,7 +16,7 @@
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link href="stylesheets/main.css" rel="stylesheet" />
 	<script>
-		var echonest_apikey = "YVK7EBOA6AZHLURKI";
+		var echonest_apikey = "YOUR_KEY";
 		var locale = "Medford, MA";
 		var artists = {};
 		var myLat = 0;
@@ -177,8 +177,6 @@
 		}
 
 		function getRandomTrack(spotify_ids) {
-			$("#city").text("Welcome to " + locale);
-			$("#button").append("<p>Loading music...</p>");
 			drawSpotifyPlayer(spotify_ids[getRandomInt(0, spotify_ids.length)]);
 		}
 
@@ -188,8 +186,9 @@
 
 		function drawSpotifyPlayer(track) {
 			var player = '<iframe src="https://embed.spotify.com/?uri=spotify:track:' + track + '" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>';
-			$("#button").empty();
-			$("#button").append(player);
+			$("#button").html(player);
+
+			$("#city").text("Welcome to " + locale);
 
 			// draw chart
 			setTimeout(function(){

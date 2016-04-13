@@ -75,6 +75,10 @@ body {
   margin-bottom: 3em;
 }
 
+#button p {
+  color: #fff;
+}
+
 .btn {
   margin-bottom: 1em;
 }
