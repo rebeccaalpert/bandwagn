@@ -2,16 +2,18 @@
 
 Hear music by artists near your geographic location. Explore other cities and see where you've been!
 
-See it in action at [bandwagn.herokuapp.com](http://bandwagn.herokuapp.com/). (A Spotify account is required to use the site.)
-
 Bandwagn was my final project for Comp 20, Web Programming, in fall 2015 at Tufts University.
 
+Bandwagn was available at [bandwagn.herokuapp.com](http://bandwagn.herokuapp.com/), but ceased operation on May 31, 2016, when support for the Echo Nest API was discontinued and Echo Nest shifted focus to the Spotify API. The Spotify API currently does not allow developers to search for artists by location, the key piece that made Bandwagn possible.
+
+The application requested the user's location, identified tracks by artists from near the user's location, and selected a track for the user to listen to via Spotify's play button. Users could then "spin the wheel" to listen to tracks by artists from other cities, served by the application database. Cities "visited" by the user were displayed on a chart of the U.S. A Spotify account was required to use the site.
+
 **Features**
-* Geolocation: The application detects the user's location and finds a song by an artist based nearby.
-* Front-end framework: The site runs on Bootstrap.
-* Charts: The site shows a map of the cities the user has "visited," powered by Google charts.
-* Client-side data persistence with local storage: The site stores where the user has been (via local storage) and uses it to display points on the map.
-* Server-side data persistence: The site is backed by a database of locations, which serves the client random latitudes and longitudes when they explore new locations.
+* Geolocation: The application detected the user's location and found a song by an artist based nearby.
+* Front-end framework: The site ran on Bootstrap.
+* Charts: The site showed a map of the cities the user had "visited," powered by Google charts.
+* Client-side data persistence with local storage: The site stored where the user had been via local storage and used it to display points on the map.
+* Server-side data persistence: The site was backed by a database of locations, which served the client random latitudes and longitudes when they explored new locations.
 
 **Data**
 * Songs by artists near geographic location (Echonest)
